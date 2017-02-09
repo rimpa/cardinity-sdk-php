@@ -17,6 +17,16 @@ use Symfony\Component\Validator\Validation;
 
 class Client
 {
+    /**
+     * Disable logger
+     */
+    const LOG_NONE = false;
+
+    /**
+     * Turn on debug mode
+     */
+    const LOG_DEBUG = null;
+
     /** @type ClientInterface */
     private $client;
 
@@ -36,7 +46,7 @@ class Client
      *     'consumerKey' => 'foo',
      *     'consumerSecret' => 'bar',
      * ]
-     * @param LoggerInterface|callable|resource|null|boolean $logger Logger used to log
+     * @param mixed $logger Logger used to log
      *     messages. Pass a LoggerInterface to use a PSR-3 logger. Pass a
      *     callable to log messages to a function that accepts a string of
      *     data. Pass a resource returned from ``fopen()`` to log to an open
@@ -44,7 +54,7 @@ class Client
      *     ``echo()``.
      * @return self
      */
-    public static function create(array $options = [], $logger = false)
+    public static function create(array $options = [], $logger = Client::LOG_NONE)
     {
         $client = new \GuzzleHttp\Client([
             'base_url' => self::$url,
@@ -67,8 +77,7 @@ class Client
         return new self(
             new Guzzle\ClientAdapter($client, new Guzzle\ExceptionMapper($mapper)),
             new Validator(Validation::createValidator()),
-            $mapper,
-            $options
+            $mapper
         );
     }
     /**
